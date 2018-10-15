@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: item
+  profiles:
+    active: prod
+
+app.env: ${spring.application.name}.${spring.profiles.active}
