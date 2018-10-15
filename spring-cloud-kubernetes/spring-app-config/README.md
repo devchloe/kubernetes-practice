@@ -51,10 +51,13 @@ rules:
   resources: ["services", "pods", "configmaps", "endpoints"]
   verbs: ["get", "watch", "list"]
 ```
+```bash
+$ kubectl create -f ./k8s-resources/cluster-role.yml
+```
 
 ### ConfigMap
 ```bash
-$ kubectl create configmap spring-app-config --from-file=applica.yml
+$ kubectl create configmap spring-app-config --from-file=application.yml
 ```
 
 ## Kubernetes Pod 생성
@@ -99,8 +102,8 @@ spec:
 
 ## 테스트 실행
 ```bash
-$ kubectl create -f replicaset.yml
-$ kubectl create -f nodeport.yml
+$ kubectl create -f ./k8s-resources/demo-config-test-replicaset.yml
+$ kubectl create -f ./k8s-resources/demo-config-test-nodeport.yml
 $ kubectl get pod
 $ kubectl logs -f <<demo-config-test pod name>>
 $ curl -i http://$(minikube ip):30123
