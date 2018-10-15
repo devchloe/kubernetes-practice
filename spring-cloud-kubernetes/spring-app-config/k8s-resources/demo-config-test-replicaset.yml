@@ -1,0 +1,17 @@
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: demo-config-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-config-test
+  template:
+    metadata:
+      labels:
+        app: demo-config-test
+    spec:
+      containers:
+      - image: devchloe/demo-config-test
+        name: demo-config-test
