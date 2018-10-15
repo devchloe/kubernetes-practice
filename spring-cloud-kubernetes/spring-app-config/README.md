@@ -1,4 +1,4 @@
-# Spring Boot application.yml 관리
+# Spring Boot application.yml externalized to Kuberenetes ConfigMap
 
 ## Spring Boot Application 생성 
 
