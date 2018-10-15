@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: order
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+      - image: devchloe/order-service
+        envFrom:
+         - configMapRef:
+             name: order-app-config
+        env:
+        - name: PROFILE
+          valueFrom:
+            configMapKeyRef:
+              name: order-app-config
+              key: spring.profiles.active
+        - name: SERVICE
+          valueFrom:
+            configMapKeyRef:
+              name: order-app-config
+              key: service.name
+        args: ["$(PROFILE)", "$(SERVICE)"]
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        name: order

@@ -1,0 +1,4 @@
+ADD spring-boot-app.sh /bin/spring-boot-app.sh
+RUN ["chmod", "+x", "/bin/spring-boot-app.sh"]
+
+ENTRYPOINT ["/bin/spring-boot-app.sh"]
