@@ -14,11 +14,16 @@ public class DemoApplication {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
-	@Value("${spring.profiles.active}")
-	private String profile;
+	@Value("${app.env}")
+	private String appEnv;
 
 	@GetMapping
 	public String hello() {
-		return profile + "환경에서 실행중입니다.";
+		return "Say Hello";
+	}
+
+	@GetMapping("/appenv")
+	public String appenv() {
+		return appEnv;
 	}
 }
