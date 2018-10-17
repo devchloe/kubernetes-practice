@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: order
+  profiles:
+    active: dev
+
+#app.env: ${spring.application.name}.${spring.profiles.active}
+app.env: Say Dev

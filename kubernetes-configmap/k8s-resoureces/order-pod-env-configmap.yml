@@ -1,0 +1,40 @@
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: order
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+      - image: devchloe/order-service:command-shell
+        name: order
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: PROFILE
+          valueFrom:
+            configMapKeyRef:
+              name: order-app-config
+              key: profile
+        volumeMounts:
+        - name: app-config
+          mountPath: /app-config
+          readOnly: true
+        command: ["/bin/spring-boot-app"]
+        args: ["$(PROFILE)"]
+      volumes:
+      - name: app-config
+        configMap:
+          name: order-app-config
+
