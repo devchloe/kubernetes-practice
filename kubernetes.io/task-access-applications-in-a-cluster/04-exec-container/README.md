@@ -20,6 +20,15 @@ WHEN    컨테이너에 쉘 명령어를 실행하거나 실행 로그를 보고
 
 ## Getting Started
 
+### Architecture
+```
+    internet   <--- $kubectl exec
+  ------|------
+     [ Pod ]
+        |
+ [ Container1 Shell, Container2 Shell, ... ]
+```
+
 ### Execution Scenario
 1. Pod 생성
 2. Container가 정상적으로 실행중인지 확인 
