@@ -40,6 +40,9 @@ WHEN    여러 클러스터에서 실행 중인 리소스를 접근해야 할 �
 5. KUBECONFIG 환경변수에 kubeconfig 파일을 지정하여 `kubectl config view`로 모아보기
 6. 기존에 통신하던 클러스터 설정파일도 KUBECONFIG 환경변수에 추가
 
+실행 결과:
+`kubectl config use-context`를 이용해서 접근하고자 하는 리소스가 있는 클러스터, 네임스페이스로 전환이 자유롭다.
+
 ### Prerequisites
 - kubectl-cli
 - kubernetes cluster (Minikube, ..)
