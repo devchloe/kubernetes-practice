@@ -50,6 +50,8 @@ $
 
 ### Create
 
+##### 생성 결과 확인
+
 ```bash
 $ kubectl create -f
 ```
@@ -57,18 +59,11 @@ $ kubectl create -f
 .yaml
 ```yaml
 ```
+##### 생성 결과 확인
 
 ```bash
 $
 ```
-
-### Create Redis Service
-
-```bash
-$
-```
-
-### Execute Port Forwarding
 
 ## References
 -
