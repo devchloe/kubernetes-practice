@@ -53,7 +53,7 @@ WHEN    여러 클러스터에서 실행 중인 리소스를 접근해야 할 �
 ### Create Kubeconfig file
 kubeconfig 파일은 clusters, users, contexts 정보를 담고 있는 설정 파일이다.
 
-##### kubeconfig 파일 생성
+#### kubeconfig 파일 생성
 
 ```bash
 $ vi config-demo-framwork.yaml
@@ -91,14 +91,14 @@ clusters, users, contexts 상세정보를 설정하기 위해서 `set-cluster`, 
 
 ### Configure Clusters, Users, Contexts
 
-##### clusters 상세설정
+#### clusters 상세설정
 cluster 주소와 접근권한을 설정한다.
 ```bash
 $ kubectl config --kubeconfig=config-demo set-cluster develpment --server=https://$(minikube ip) --certificate-autority=fake-ca-file
 $ kubectl config --kubeconfig=config-demo set-cluster scratch --server=https://$(minikube ip) --insecure-skip-tls-verify
 ```
 
-##### users 상세설정
+#### users 상세설정
 user별로 인증방법(credential)을 정의한다.
 `developer` 라는 user는 `key/cert-file` 방식으로 인증한다.
 `experimenter` 라는 user는 `username/password` 방식으로 인증한다.
@@ -107,7 +107,7 @@ $ kubectl config --kubeconfig=config-demo set-credentials developer --client-cer
 $ kubectl config --kubeconfig=config-demo set-credentials experimenter --username=exp --password=some-password
 ```
 
-##### contexts 상세설정
+#### contexts 상세설정
 cluster 안에서 resource들을 서로 다른 namespace로 구분할 수 있는데 context 개념은 cluster + namespace 조합으로 cluster 안에 namespace를 가리키는 별칭이다.
 
 `dev-frontend` context는 `development` cluster 안에 `frontend` namespace에 접근하려면 `developer`로 정의한 credential이 있어야 접근할 수 있다.
@@ -118,13 +118,13 @@ $ kubectl config --kubeconfig=config-demo set-context dev-storage --cluster=deve
 $ kubectl config --kubeconfig=config-demo set-context exp-scratch --cluster=scratch --namespace=default --user=experimenter
 ```
 
-##### kubeconfig 파일 생성 결과 확인
+#### kubeconfig 파일 생성 결과 확인
 
 ```bash
 $ kubectl config --kubeconfig=config-demo view
 ```
 
-##### kubeconfig 파일에 current-context 설정 및 확인
+#### kubeconfig 파일에 current-context 설정 및 확인
 아래와 같이 current-context를 설정하면 실행하는 `kubectl` command는 currnet-context가 바라보는 cluster와 namespace에 적용되고 user에 정의한 credential을 이용할 것이다.
 ```bash
 $ kubectl config --kubeconfig=config-demo use-context dev-frontend
@@ -140,34 +140,34 @@ $ kubectl config --kubeconfig=config-demo view --minify # current-context 정보
 
 `dev-ramp-up` 이라는 context를 가진 config-demo-2 파일을 생성하고 `KUBECONFIG` 라는 환경변수에 `:`으로 kubeconfig 파일 경로를 지정해준다.
 
-##### export KUBECONFIG 실행 
+#### export KUBECONFIG 실행 
 
 ```bash
 $ vi config-demo-2
 $ export KUBECONFIG_SAVED=$KUBECONFIG
 $ export KUBECONFIG=$KUBECONFIG:config-demo:config-demo-2
 ```
-##### export KUBECONFIG 실행 결과 확인
+#### export KUBECONFIG 실행 결과 확인
 ```bash
 $ kubectl config view
 ```
 
 ### Add $HOME/.kube/config to KUBECONFIG environment variable
 
-##### $HOME/.kube 디렉토리 확인
+#### $HOME/.kube 디렉토리 확인
 kubectl이 어떤 클러스터와 통신하고 있다면 `$HOME/.kube` 디렉토리에 `config` 파일이 존재할 것이다.
 
 이 파일을 열어보면 clusters, users, contexts 정보가 있는 것을 알 수 있다.
 
 이 파일도 `KUBECONFIG` 환경변수에 추가해보자.
 
-##### $HOME/.kube/config 파일 추가
+#### $HOME/.kube/config 파일 추가
 
 ```bash
 $ export KUBECONFIG=$KUBECONFIG:$HOME/.kube/config
 ```
 
-##### 모든 kubeconfig 파일 설정 확인
+#### 모든 kubeconfig 파일 설정 확인
 ```bash
 $ kubectl config view
 ```
