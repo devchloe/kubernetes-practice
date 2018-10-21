@@ -23,13 +23,11 @@ $ kubectl port-forward <service, pod, deployement name> <local-port>:<remote-por
   Pod selected by Service, Pod, Deployment
 ```
 
-#### ip 지정없이 어떻게 이름만으로 요청이 전달될까?
+##### ip 지정없이 어떻게 이름만으로 요청이 전달될까?
 `kubectl port-forward <service|pod|deployment name> [port array]`를 실행하면 다음과 같은 요청을 만들어 `api-server`에게 보낸다.
 `POST /api/v1/namespaces/{namespace}/pods/{name}/portforward`
 
 그리고 커맨드로 전달된 `<local-port>:<remote-port>` 목록으로 local과 destination 간에 WebSocket을 생성한다. local port로 들어온 모든 요청은 터널링을 통해 destination으로 전달된다.
-
-Reference: [kubernetes-api:v1.11/port-forward](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#-strong-proxy-operations-pod-v1-core-strong-)
 
 ## Expectations
 ```
@@ -73,21 +71,19 @@ $ kubectl exec redis-master-xxx redis-cli get chloe
 ```
 
 ### Execution Scenario
-먼저 Pod Replicas를 생성하고 Pod Replicas의 단일 지점 역할을 하는 Service를 만든다.
+1. Deployment 생성 - Pod과 함께 ReplicaSet이 생성된다.
+2. Service 생성
+3. 로컬 머신에서 redis-cli 커맨드 실행 - Connection refused
+4. Port Forwarding을 통한 터널링
 
-클러스터 밖에서 Redis Server Pod에 접속하고 작업을 실행할 수 있도록 여러 리소스 중 하나를 Port Forwarding 방식으로 노출시킨다.
+실행 결과:
+local workstation에서 Pod에서 실행중인 Redis Server에 붙어서 디버깅을 수행할 수 있다.
 
-만약 노출시키지 않은 상태에서 로컬에서 redis-cli를 실행하면 기본으로 120.0.0.1:6379로 연결을 시도하기 때문에  pod 안에 들어가서 redis-cli를 통해 데이터를 조작하지 않고 로컬에서 redis-cli로 작업하려면 port forwarding이나 NodePort/Loabbalancer type Service를 만들어 노출시켜야 한다.
-
-Pod에 포트 포워딩을 해도 되는데..Service를 만들어야 하는 이유?
-여러 Pod replicas가 만들어지고 Service로 그룹화해서 관리할테니까..
-
-결과적으로 local workstation에서 Pod에서 실행중인 Redis Server에 붙어서 디버깅을 수행할 수 있다.
-
-pod, replicaset, service의 label을 모두 똑같이 설정 -
-app: redis, role: master, tier: backend
+Tip:
+Pod, ReplicaSet, Service 리소스 label이 모두 같다.
 
 ```bash
+# labels: app: redis, role: master, tier: backend
 $ kubectl get pods --show-labels | grep redis
 $ kubectl get rs --show-labels | grep redis
 $ kubectl get deployment --show-labels | grep redis
@@ -110,11 +106,12 @@ $ redis-cli
 ### Create Redis Deployment
 Deployment는 Pod을 직접 관리하지 않고 ReplicaSet을 추가로 생성하여 관리한다.
 
+##### Deployment 생성
 ```bash
 $ kubectl create -f redis-master-deployment.yaml
 ```
 
-redis-master-deployment.yaml
+redis-master-deployment.yaml:
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -142,7 +139,7 @@ spec:                   # -- 이하는 Deployment의해 생성되는 ReplicaSet�
         ports:
         - containerPort: 6379
 ```
-
+##### Deployment 생성 결과 확인
 ```bash
 $ kubectl get pods
 $ kubectl get deployment redis-master
@@ -152,13 +149,39 @@ $ echo 'Pod' $(kubectl describe pods $(kubectl get po | grep ^redis-master | cut
 
 ### Create Redis Service
 
+##### Service 생성
+
 ```bash
 $ kubectl create -f redis-master-service.yaml
+```
+
+redis-master-service.yaml:
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  labels:
+    app: redis
+    role: master
+    tier: backend
+spec:
+  selector:
+    app: redis
+    role: master
+    tier: backend
+  ports:
+  - port: 6379
+    targetPort: 6379
+```
+
+##### Service 생성 결과 확인
+```bash
 $ kubectl get svc | grep redis
 $ kubectl get pods <redis pod name> --template='{{(index (index .spec.containers 0).ports 0).containerPort}} {{"\n"}}' # Redis Server listening port 확인
 ```
 
-현재까지 만들어진 Redis 리소느는 다음과 같다.
+현재까지 만들어진 Redis 리소스는 다음과 같다.
 - Pod
 - ReplicaSet
 - Deployment
@@ -166,12 +189,13 @@ $ kubectl get pods <redis pod name> --template='{{(index (index .spec.containers
 
 Deployment를 제외한 나머지 리소스는 동일한 label을 포함한다.
 
-현재 클러스터 밖에 있는 머신에서 `redis-cli`를 수행하면 Connecion refused가 발생한다.
+현재 로컬 머신(클러스터 밖)에서 `redis-cli`를 수행하면 Connecion refused가 발생한다.
 
 ### Execute Port Forwarding
 
-`kubectl port-forward <service name|pod name|..>`을 이용하면 이름과 매칭하는 Pod을 찾고 local port를 container port로 포워딩한다.
+`kubectl port-forward <service name|pod name|..>`을 이용하면 리소스 이름을 이용하여 매칭하는 Pod을 찾고 local port를 container port로 포워딩한다.
 
+##### Port Forwarding 실행
 ```bash
 $ kubectl port-forward <redis pod name> 6379:6379
 $ kubectl port-forward pods/<redis pod name> 6379:6379
@@ -180,8 +204,10 @@ $ kubectl port-forward rs/<redis replicaset name> 6379:6379
 $ kubectl port-forward svc/redis-master 6379:6379
 ```
 
+##### Port Forwarding 실행 결과 확인
 Port Forwarding을 수행하면 local port로 클러스터 안에서 실행중인 Redis Server Pod에 접속할 수 있다.
-위 5가지 command 중 어떤 것을 수행하더라도 label selector에 의해 Service, ReplicaSet -> Redis Server Pod, Deployment -> ReplicaSet -> Redis Server Pod으로 라우팅된다.
+
+위 5가지 커맨드 중 어떤 것을 수행하더라도 label selector에 의해 Redis Server Pod이 선택되므로 로컬 머신에서 보낸 모든 요청은 Redis Server가 리스닝하고 있는 port로 전달된다.
 
 ```bash
 $ redis-cli # local port 6379와 Pod에서 실행중인 Redis Server port 6379로 TCP Connection을 맺는다.
@@ -194,6 +220,7 @@ kwon
 
 ## References
 - https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/
+- https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#-strong-proxy-operations-pod-v1-core-strong-
 
 ## Relates to
 - Kubernetes in action Part2. 9장
