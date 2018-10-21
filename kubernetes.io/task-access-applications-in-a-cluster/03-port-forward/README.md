@@ -7,7 +7,7 @@
 $ kubectl port-forward <service, pod, deployement name> <local-port>:<remote-port> <options>
 ```
 
-### How to Port Forwarding
+### How to Work
 `kubectl port-forward`를 사용해서 local port를 Kubernetes service, pod, deployment에 매핑할 수 있다. 어디에 매핑하든 관계없이 local port로 들어온 요청(패킷)은 최종적으로 Pod으로 라우팅된다.
 
 ```
