@@ -106,7 +106,7 @@ $ redis-cli
 ### Create Redis Deployment
 Deployment는 Pod을 직접 관리하지 않고 ReplicaSet을 추가로 생성하여 관리한다.
 
-##### Deployment 생성
+#### Deployment 생성
 ```bash
 $ kubectl create -f redis-master-deployment.yaml
 ```
@@ -139,7 +139,7 @@ spec:                   # -- 이하는 Deployment의해 생성되는 ReplicaSet�
         ports:
         - containerPort: 6379
 ```
-##### Deployment 생성 결과 확인
+#### Deployment 생성 결과 확인
 ```bash
 $ kubectl get pods
 $ kubectl get deployment redis-master
@@ -149,7 +149,7 @@ $ echo 'Pod' $(kubectl describe pods $(kubectl get po | grep ^redis-master | cut
 
 ### Create Redis Service
 
-##### Service 생성
+#### Service 생성
 
 ```bash
 $ kubectl create -f redis-master-service.yaml
@@ -175,7 +175,7 @@ spec:
     targetPort: 6379
 ```
 
-##### Service 생성 결과 확인
+#### Service 생성 결과 확인
 ```bash
 $ kubectl get svc | grep redis
 $ kubectl get pods <redis pod name> --template='{{(index (index .spec.containers 0).ports 0).containerPort}} {{"\n"}}' # Redis Server listening port 확인
@@ -195,7 +195,7 @@ Deployment를 제외한 나머지 리소스는 동일한 label을 포함한다.
 
 `kubectl port-forward <service name|pod name|..>`을 이용하면 리소스 이름을 이용하여 매칭하는 Pod을 찾고 local port를 container port로 포워딩한다.
 
-##### Port Forwarding 실행
+#### Port Forwarding 실행
 ```bash
 $ kubectl port-forward <redis pod name> 6379:6379
 $ kubectl port-forward pods/<redis pod name> 6379:6379
@@ -204,7 +204,7 @@ $ kubectl port-forward rs/<redis replicaset name> 6379:6379
 $ kubectl port-forward svc/redis-master 6379:6379
 ```
 
-##### Port Forwarding 실행 결과 확인
+#### Port Forwarding 실행 결과 확인
 Port Forwarding을 수행하면 local port로 클러스터 안에서 실행중인 Redis Server Pod에 접속할 수 있다.
 
 위 5가지 커맨드 중 어떤 것을 수행하더라도 label selector에 의해 Redis Server Pod이 선택되므로 로컬 머신에서 보낸 모든 요청은 Redis Server가 리스닝하고 있는 port로 전달된다.
