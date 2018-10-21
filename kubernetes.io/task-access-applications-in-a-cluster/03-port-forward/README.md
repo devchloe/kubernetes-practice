@@ -1,6 +1,6 @@
 # Use Port Forwarding to Access Applications in a Cluster
 
-### Summary
+## Summary
 
 #### Syntax
 
@@ -33,7 +33,7 @@ $ kubectl port-forward <service, pod, deployement name> <local-port>:<remote-por
 https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#-strong-proxy-operations-pod-v1-core-strong-
 
 
-### Expectations
+## Expectations
 
 **WHO**     어플케이션 개발자가
 **WHERE**   로컬 개발 환경에서
@@ -58,7 +58,7 @@ $ kubectl exec redis-master-xxx redis-cli get chloe
 
 port-forward를 제대로 사용할 줄 모를 때에는 로컬 머신에서 ssh로 Kubernetes node에 직접 접속해서 작업하고 테스트 했었다. 로컬 머신에서 kubeconfig를 정의하고 current-context를 설정한 후 port-forward 했으면 되었을텐데..
 
-### Getting Started
+## Getting Started
 
 #### 아키텍처
 ```
@@ -104,7 +104,7 @@ $ brew install redis
 $ redis-cli
 ```
 
-### STEP1. Redis Deployment 생성
+## STEP1. Redis Deployment 생성
 Deployment는 Pod을 직접 관리하지 않고 ReplicaSet을 추가로 생성하여 관리한다.
 
 ```bash
@@ -147,7 +147,7 @@ $ kubectl get rs
 $ echo 'Pod' $(kubectl describe pods $(kubectl get po | grep ^redis-master | cut -f1 -d ' ') | grep -E 'Controlled By' | cut -f1 -d '/') $(kubectl describe rs $(kubectl get rs | grep ^redis-master | cut -f1 -d ' ') | grep -E 'Controlled By' | cut -f1 -d '/') $(kubectl describe deployment $(kubectl get deployment | grep redis-master | cut -f1 -d ' ') | grep -E 'Controlled By' | cut -f1 -d '/')
 ```
 
-### STEP2. Redis Service 생성
+## STEP2. Redis Service 생성
 
 ```bash
 $ kubectl create -f redis-master-service.yaml
@@ -165,7 +165,7 @@ Deployment를 제외한 나머지 리소스는 동일한 label을 포함한다.
 
 현재 클러스터 밖에 있는 머신에서 `redis-cli`를 수행하면 Connecion refused가 발생한다.
 
-### STEP3. Port Forwarding
+## STEP3. Port Forwarding
 
 `kubectl port-forward <service name|pod name|..>`을 이용하면 이름과 매칭하는 Pod을 찾고 local port를 container port로 포워딩한다.
 
