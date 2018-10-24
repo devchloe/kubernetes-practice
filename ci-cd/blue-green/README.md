@@ -2,7 +2,14 @@
 
 Why Blue-Green Deployment important?
 - zero-downtime during deployment
+  - 완전히 요청을 받을 준비를 한 상태에서 릴리즈할 수 있다.
 - decrease risk for deploying new features
+  - 동일한 운영 환경에서 실행/테스트 후 배포할 수 있다.
+- easy to rollback to previous version
+  - router/loadbalancer의 목적지만 바꿔주면 된다.
+
+Kubernetes는 Blue-Green Deployment를 Native하게 지원하지 않기 때문에 이를 지원하는 자동화된 툴이나 프로그램을 이용해야 한다.
+그러나 Deployement와 Service 리소스를 이용해서 쉽게 구현할 수 있다.
 
 ## Blue-Green Deployement Scenario
 
