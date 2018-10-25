@@ -76,3 +76,5 @@ sh blue-green-deployement.sh ci-cd nginx 1.11 green-nginx-deployment.yaml
 ## Reference 
 - https://www.ianlewis.org/en/bluegreen-deployments-kubernetes
 - https://codefresh.io/kubernetes-tutorial/fully-automated-blue-green-deployments-kubernetes-codefresh/
+
+- More: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
