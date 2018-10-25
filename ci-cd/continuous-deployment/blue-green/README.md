@@ -22,13 +22,13 @@ Kubernetes는 Blue-Green Deployment를 Native하게 지원하지 않기 때문�
 
 ## Blue-Green Deployment's yaml file
 
-1. kubectl create namespace blue-green
+1. kubectl create -f blue-green-namespace.yaml
 2. kubectl create -f blue-nginx-deployment.yaml
 3. kubectl create -f nginx-service.yaml (selector label: nginx, 1.10)
 4. EXTERNAL_IP=$(kubectl get svc nginx -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 curl -s http://$EXTERNAL_IP/version | grep nginx
 
-or curl -s http://$(minikube ip):$(kubectl get svc nginx -n ci-cd -o jsonpath="{.spec.ports[*].nodePort"})/version | grep nginx
+or curl -s http://$(minikube ip):$(kubectl get svc nginx -n blue-green -o jsonpath="{.spec.ports[*].nodePort"})/version | grep nginx
 
 결과: nginx/1.10.3
 
@@ -46,7 +46,7 @@ spec:
 8. EXTERNAL_IP=$(kubectl get svc nginx -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 curl -s http://$EXTERNAL_IP/version | grep nginx
 
-or curl -s http://$(minikube ip):$(kubectl get svc nginx -n ci-cd -o jsonpath="{.spec.ports[*].nodePort"})/version | grep nginx
+or curl -s http://$(minikube ip):$(kubectl get svc nginx -n blue-green -o jsonpath="{.spec.ports[*].nodePort"})/version | grep nginx
 
 결과: nginx/1.11.13
 
@@ -62,9 +62,9 @@ Required:
 1. sh blue-green-deployement.sh <namespace> <service-name> <new-version> <new-deployment-file-path>
 
 Example:
-sh blue-green-deployement.sh ci-cd nginx 1.11 green-nginx-deployment.yaml
+sh blue-green-deployement.sh blue-green nginx 1.11 green-nginx-deployment.yaml
 
-`nginx` Service를 `1.11` 버전으로 `ci-cd` 네임스페이스에 새롭게 배포함
+`nginx` Service를 `1.11` 버전으로 `blue-green` 네임스페이스에 새롭게 배포함
 
 배포되는 어플리케이션은 `green-nginx-deployment.yaml`에 Deployment로 정의되어 있음
 
