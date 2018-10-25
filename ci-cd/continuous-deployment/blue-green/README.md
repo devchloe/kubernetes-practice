@@ -25,7 +25,7 @@ Kubernetes는 Blue-Green Deployment를 Native하게 지원하지 않기 때문�
 1. kubectl create -f blue-green-namespace.yaml
 2. kubectl create -f blue-nginx-deployment.yaml
 3. kubectl create -f nginx-service.yaml (selector label: nginx, 1.10)
-4. EXTERNAL_IP=$(kubectl get svc nginx -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
+4. EXTERNAL_IP=$(kubectl get svc nginx -n blue-green -o jsonpath="{.status.loadBalancer.ingress[*].ip}")
 curl -s http://$EXTERNAL_IP/version | grep nginx
 
 or curl -s http://$(minikube ip):$(kubectl get svc nginx -n blue-green -o jsonpath="{.spec.ports[*].nodePort"})/version | grep nginx
