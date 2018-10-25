@@ -1,0 +1,153 @@
+~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment/canary [master ↑·3|✚ 1…10]
+21:32 $ kubectl create -f step0/stable-nginx-deployment.yaml
+deployment.apps/nginx-stable created
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment/canary [master ↑·3|✚ 1…10
+]
+21:32 $ kubectl create -f step1/canary-nginx-deployment.yaml
+deployment.apps/nginx-canary created
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment
+/canary [master ↑·3|✚ 1…10]
+21:33 $ kubectl apply -f step1/stable-nginx-deployment.yaml
+Warning: kubectl apply should be used on resource created by either ku
+bectl create --save-config or kubectl apply
+deployment.apps/nginx-stable configured
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment
+/canary [master ↑·3|✚ 1…10]
+21:33 $ kubectl apply -f step2/canary-nginx-deployement.yaml
+Warning: kubectl apply should be used on resource created by either ku
+bectl create --save-config or kubectl apply
+deployment.apps/nginx-canary configured
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment
+/canary [master ↑·3|✚ 1…10]
+21:34 $ kubectl apply -f step2/stable-nginx-deployment.yaml
+deployment.apps/nginx-stable configured
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment
+/canary [master ↑·3|✚ 1…10]
+21:34 $ kubectl apply -f step3/canary-nginx-deployment.yaml
+deployment.apps/nginx-stable configured
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd/continuous-deployment
+/canary [master ↑·3|✚ 1…10]
+21:34 $ kubectl delete deployment ngin
+x-canary -n canary
+deployment.extensions "nginx-canary" d
+eleted
+================
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:32 $ kubectl get po -n canary
+NAME                            READY   STATUS    RESTARTS   AGE
+nginx-stable-5cd956577b-8s2tq   1/1     Running   0          21s
+nginx-stable-5cd956577b-d5nzj   1/1     Running   0          21s
+nginx-stable-5cd956577b-dbw54   1/1     Running   0          21s
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:33 $ kubectl get po -n canary
+NAME                            READY   STATUS    RESTARTS   AGE
+nginx-canary-6956799ffb-rl6c8   1/1     Running   0          4s
+nginx-stable-5cd956577b-8s2tq   1/1     Running   0          1m
+nginx-stable-5cd956577b-d5nzj   1/1     Running   0          1m
+nginx-stable-5cd956577b-dbw54   1/1     Running   0          1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:33 $ kubectl get po -n canary
+NAME                            READY   STATUS        RESTARTS   AGE
+nginx-canary-6956799ffb-rl6c8   1/1     Running       0          22s
+nginx-stable-5cd956577b-8s2tq   1/1     Running       0          1m
+nginx-stable-5cd956577b-d5nzj   1/1     Running       0          1m
+nginx-stable-5cd956577b-dbw54   0/1     Terminating   0          1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:33 $ kubectl get po -n canary
+NAME                            READY   STATUS    RESTARTS   AGE
+nginx-canary-6956799ffb-h2wm2   1/1     Running   0          3s
+nginx-canary-6956799ffb-rl6c8   1/1     Running   0          42s
+nginx-stable-5cd956577b-8s2tq   1/1     Running   0          1m
+nginx-stable-5cd956577b-d5nzj   1/1     Running   0          1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:34 $ kubectl get po -n canary
+NAME                            READY   STATUS    RESTARTS   AGE
+nginx-canary-6956799ffb-h2wm2   1/1     Running   0          19s
+nginx-canary-6956799ffb-rl6c8   1/1     Running   0          58s
+nginx-stable-5cd956577b-d5nzj   1/1     Running   0          1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:34 $ kubectl get po -n canary
+NAME                            READY   STATUS              RESTARTSAGE
+nginx-canary-6956799ffb-h2wm2   1/1     Running             046s
+nginx-canary-6956799ffb-rl6c8   1/1     Running             01m
+nginx-stable-5cd956577b-9r9cf   0/1     ContainerCreating   02s
+nginx-stable-5cd956577b-d5nzj   1/1     Running             02m
+nginx-stable-5cd956577b-sf7g2   0/1     ContainerCreating   02s
+nginx-stable-76f6f5ff9-9th5n    0/1     ContainerCreating   02s
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:35 $ kubectl get po -n canary
+NAME                            READY   STATUS        RESTARTS   AGE
+nginx-canary-6956799ffb-h2wm2   1/1     Running       0          57s
+nginx-canary-6956799ffb-rl6c8   1/1     Running       0          1m
+nginx-stable-5cd956577b-d5nzj   0/1     Terminating   0          2m
+nginx-stable-76f6f5ff9-9th5n    1/1     Running       0          13s
+nginx-stable-76f6f5ff9-dngp7    1/1     Running       0          9s
+nginx-stable-76f6f5ff9-vks2w    1/1     Running       0          11s
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:35 $ kubectl get po -n canary
+NAME                            READY   STATUS    RESTARTS   AGE
+nginx-canary-6956799ffb-h2wm2   1/1     Running   0          1m
+nginx-canary-6956799ffb-rl6c8   1/1     Running   0          2m
+nginx-stable-76f6f5ff9-9th5n    1/1     Running   0          1m
+nginx-stable-76f6f5ff9-dngp7    1/1     Running   0          56s
+nginx-stable-76f6f5ff9-vks2w    1/1     Running   0          58s
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:35 $ kubectl get po -n canary
+NAME                            READY   STATUS        RESTARTS   AGE
+nginx-canary-6956799ffb-h2wm2   0/1     Terminating   0          2m
+nginx-canary-6956799ffb-rl6c8   0/1     Terminating   0          3m
+nginx-stable-76f6f5ff9-9th5n    1/1     Running       0          1m
+nginx-stable-76f6f5ff9-dngp7    1/1     Running       0          1m
+nginx-stable-76f6f5ff9-vks2w    1/1     Running       0          1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:36 $ kubectl get po -n canary
+NAME                           READY   STATUS    RESTARTS   AGE
+nginx-stable-76f6f5ff9-9th5n   1/1     Running   0          1m
+nginx-stable-76f6f5ff9-dngp7   1/1     Running   0          1m
+nginx-stable-76f6f5ff9-vks2w   1/1     Running   0          1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:36 $
+====================
+kubectp✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚1…10]
+21:33 $ kubectp get deployment -n canary
+bash: kubectp: command not found
+✘-127 ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:33 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-stable   3         3         3            3           39s
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:33 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-canary   1         1         1            1           8s
+nginx-stable   3         3         3            3           1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:33 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-canary   1         1         1            1           24s
+nginx-stable   2         2         2            2           1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:34 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-canary   2         2         2            2           47s
+nginx-stable   2         2         2            2           1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:34 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-canary   2         2         2            2           1m
+nginx-stable   1         1         1            1           1m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:34 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-canary   2         2         2            2           1m
+nginx-stable   3         4         2            3           2m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:35 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-canary   2         2         2            2           2m
+nginx-stable   3         3         3            3           3m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:36 $ kubectl get deployment -n canary
+NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-stable   3         3         3            3           4m
+✔ ~/workspace/devchloe/kubernetes-practice/ci-cd [master ↑·3|✚ 1…10]
+21:36 $

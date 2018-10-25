@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-stable
+  namespace: canary
+  labels:
+    name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nginx
+      release: stable
+  template:
+    metadata:
+      labels:
+        name: nginx
+        release: stable
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.10
+        ports:
+        - name: http
+          containerPort: 80
