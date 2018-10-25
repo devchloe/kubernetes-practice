@@ -22,7 +22,7 @@ Kubernetes는 Blue-Green Deployment를 Native하게 지원하지 않기 때문�
 
 ## Blue-Green Deployment's yaml file
 
-1. kubectl create namespace ci-cd
+1. kubectl create namespace blue-green
 2. kubectl create -f blue-nginx-deployment.yaml
 3. kubectl create -f nginx-service.yaml (selector label: nginx, 1.10)
 4. EXTERNAL_IP=$(kubectl get svc nginx -o jsonpath="{.status.loadBalancer.ingress[*].ip}")

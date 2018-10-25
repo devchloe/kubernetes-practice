@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-1.11
-  namespace: ci-cd
+  namespace: blue-green
   labels:
     name: nginx
 spec:
