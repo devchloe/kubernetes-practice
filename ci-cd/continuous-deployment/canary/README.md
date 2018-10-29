@@ -1,14 +1,28 @@
 # Deployment Strategy - Canary Deployment
 
 Why Canary Deployment important?
+- fail-fast
+- feature, performace, etc. verification
 - 빅이슈가 예상되는 경우, 새로운 피쳐를 일정 유저를 대상으로 테스트해보고 싶은 경우
+- 트래픽을 새로운 버전으로 점차 늘려가면서 배포하는 방법
+
+- 대체재: Istio/ Helm을 사용할 수도 있다.
+- Istio를 이용하면 클러스터 안에서 traffic을 규칙에 따라 원하는대로 분배할 수 있다. Istio는 canary 배포를 위한 완벽한 기능을 제공하는데 그 이유는 pod 수와 관계없이 들어오는 트래픽을 비율로 나눌 수 있기 때문이다. 그럼 traffic 비율을 조정하기 위해서 pod을 추가 생성할 필요없기 때문에 자원도 효율적으로 쓸 수 있겠지..
+
+## vs Blue/Green deployments
+- 여러 버전이 함께 트래픽을 받을 수 있다.
+- 그렇기 때문에 sticky session mechanism을 이용하지 않는다면 하나의 session이 여러 request를 보낼 때 어떤 것은 stable server에서 어떤 것은 canary server에서 처리될 수 있다.
+
+이 두가지가 보장될 수 없다면 Blue/Geren 배포가 훨씬 더 안전한 배포 방법이다.
 
 ## Canary Deployement Scenario
 
 - 이미 운영 중인 Pod/Application: Stable
 - 새로 릴리즈할 Pod/Application: Canary
 
-1. Stable 버전의 replicas 수를 줄인다.
+1. 트래픽을 Stable과 Canary 버전으로 어느 비율로 나눌지 결정하고 그에 따라 Stable 버전의 replicas 수를 줄인다. 
+예를 들어 stable:canary = 90%:10% traffic을 원한다면 최소 stable version pod이 9개 존재해야 한다.
+
 2. 즐인 replicas 수만큼 Canary 버전의 Deployment를 생성한다.
 
 ! 이 때 주의할 것은 Service는 변경하지 않기 때문에 Service에 지정한 selector에 Canary 버전이 포함될 수 있도록 Canary Pod의 label을 작성해야 한다.
@@ -55,35 +69,31 @@ echo $(kubectl get deployment nginx-canary -n canary -o jsonpath='{.spec.replica
 
 10. kubectl delete deployment nginx-canary -n canary
 
-## Prerequisites
-9번, 10번 과정을 하지 않고 step2/canary-nginx-deployment.yaml의 replicas:3으로 바꾸고 Canary Deployment의 name, selector의 release값도 stable로, pod label의 release로 stable로 편집하면 안되냐고 물을 수도 있다.
-
-<!-- 삭제예정 
 
 
-그런데 이렇게 하면 편집하기 전에 생성된 canary 버전의 pod은 고아가 된다. 왜냐하면 편집된 deployement가 생성한 ReplicaSet Controller가 달라지고 다른 Pod을 replicas 수만큼 생성해서 관리할 것이기 때문이다. 그러면 Pod을 한번에 싹 다 지우고 다시 생성하는 것과 동일하며 downtime이 발생한다.
--->
+======================
+
+## 다른 방법
+단순히 v1 deployment를 생성하고 운영하다가 v2 deployment replicas를 1로 운영하고 지켜본다.
+v2 deployment replicas를 `kubectl scale --replicas=10 deploy app-v2`로 replicas를 올린 후 v1을 delete한다.
 
 ## log
 결과 분석:
 마지막 9를 실행하면 nginx-stable Deployment의 RollingUpdate가 일어나면서 마지막 남은 nginx:1.10 버전이 자연스럽게 종료된다. 그리고 이미지 버전을 1.11로 바꿨기 때문에 자연스럽게 replicas 수만큼 nginx:1.11 pod이 생성된다. 
 
-만약 nginx-stable Deployment를 버리고 nginx-canary Deployment를 그대로 운영한다면 RollingUpdate가 일어나는 것이 아니라 아예 새로운 Deployment가 운영되는 것이다.
 
 
-
-
-
-
-
-Required:
-- **Pod labels 와 Service selector 값이 같고 version을 label로 포함해야 한다.** : Router/LoadBalancer가 upstream 목적지를 스위칭하는 기준이 되기 때문
-- Deployment name은 `Service name-version` 이어야 한다. (Deployment가 잘 배포되었는지 확인하기 위한 기준으로 사용, Deployment의 각 버전을 구별할 수 있는 기준값이 있어야 함)
-
-- Docker image를 Git hash로 태깅하고 spec에 version을 Git hash값으로 지정하는 것도 좋은 방법
 
 ## 5~7 과정 자동화
-1. sh blue-green-deployement.sh <namespace> <service-name> <new-version> <new-deployment-file-path>
+1. sh blue-green-deployment.sh <namespace> <service-name> <new-version> <new-deployment-file-path>
+
+sh canary-deployment.sh <namespace> <service-name> <canary-deployment-file-path> <stable-deployment-name> <stable-replicas>
+optional: stable-deployment-name, stable-replicas
+
+
+
+
+
 
 Example:
 sh blue-green-deployement.sh blue-green nginx 1.11 green-nginx-deployment.yaml
@@ -98,7 +108,7 @@ sh blue-green-deployement.sh blue-green nginx 1.11 green-nginx-deployment.yaml
 
 
 ## Reference 
-- https://www.ianlewis.org/en/bluegreen-deployments-kubernetes
-- https://codefresh.io/kubernetes-tutorial/fully-automated-blue-green-deployments-kubernetes-codefresh/
+- https://hackernoon.com/canary-release-with-kubernetes-1b732f2832ac
 
-- More: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+## TODO
+- AWS에서 Canary deployment or A/B test 환경 꾸리기
