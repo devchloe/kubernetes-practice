@@ -5,6 +5,7 @@ metadata:
   namespace: canary
   labels:
     name: nginx
+    release: canary
 spec:
   replicas: 3
   selector:
