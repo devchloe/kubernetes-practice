@@ -52,6 +52,7 @@ a. kubectl create -f step1/canary-nginx-deployment.yaml
 
 b. kubectl patch deployment nginx-stable -n canary -p '{"spec":{"replicas":2}}'
 or kubectl apply -f step1/stable-nginx-deployment.yaml
+or kubectl scale ~~
 
 6. stable/canary 개수 확인
 echo $(kubectl get deployment nginx-stable -n canary -o jsonpath='{.spec.replicas}')
@@ -62,9 +63,13 @@ echo $(kubectl get deployment nginx-canary -n canary -o jsonpath='{.spec.replica
 결과: nginx/1.10.3 >> nginx/1.11.13
 
 8. 5-7 반복
+canary scale up (+readinessProbe)
+stable scale down
 결과: nginx/1.10.3 << nginx/1.11.13
 
 9. kubectl apply -f step3/canary-nginx-deployment.yaml
+RollingUpdate가 일어남
+
 결과: ngnginx/1.11.13
 
 10. kubectl delete deployment nginx-canary -n canary
@@ -109,6 +114,7 @@ sh blue-green-deployement.sh blue-green nginx 1.11 green-nginx-deployment.yaml
 
 ## Reference 
 - https://hackernoon.com/canary-release-with-kubernetes-1b732f2832ac
+- https://codefresh.io/kubernetes-tutorial/fully-automated-canary-deployments-kubernetes/
 
 ## TODO
 - AWS에서 Canary deployment or A/B test 환경 꾸리기
