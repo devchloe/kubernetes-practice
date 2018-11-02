@@ -74,10 +74,6 @@ RollingUpdate가 일어남
 
 10. kubectl delete deployment nginx-canary -n canary
 
-
-
-======================
-
 ## 다른 방법
 단순히 v1 deployment를 생성하고 운영하다가 v2 deployment replicas를 1로 운영하고 지켜본다.
 v2 deployment replicas를 `kubectl scale --replicas=10 deploy app-v2`로 replicas를 올린 후 v1을 delete한다.
@@ -87,29 +83,20 @@ v2 deployment replicas를 `kubectl scale --replicas=10 deploy app-v2`로 replica
 마지막 9를 실행하면 nginx-stable Deployment의 RollingUpdate가 일어나면서 마지막 남은 nginx:1.10 버전이 자연스럽게 종료된다. 그리고 이미지 버전을 1.11로 바꿨기 때문에 자연스럽게 replicas 수만큼 nginx:1.11 pod이 생성된다. 
 
 
-
-
-## 5~7 과정 자동화
-1. sh blue-green-deployment.sh <namespace> <service-name> <new-version> <new-deployment-file-path>
-
-sh canary-deployment.sh <namespace> <service-name> <canary-deployment-file-path> <stable-deployment-name> <stable-replicas>
-optional: stable-deployment-name, stable-replicas
-
-
-
-
-
+## 5~10 과정 자동화
+1. sh canary-deployment.sh <namespace> <canary-deployment-file-path> <stable-deployment-name> <stable-pod-replicas>
+2. sh canary-rollout.sh <namespace> <stable-deployment-name> <container-name> <image> <stable-pod-replicas> <canary-deployment-name-to-be-deleted>
 
 Example:
-sh blue-green-deployement.sh blue-green nginx 1.11 green-nginx-deployment.yaml
+```bash
+sh canary-deployment.sh canary step1/canary-nginx-deployment.yaml nginx-stable 2
+```
+`nginx-canary` 버전을 `canary` 네임스페이스에 배포하고 `nginx-stable` 버전의 replicas를 2개로 줄임
 
-`nginx` Service를 `1.11` 버전으로 `blue-green` 네임스페이스에 새롭게 배포함
-
-배포되는 어플리케이션은 `green-nginx-deployment.yaml`에 Deployment로 정의되어 있음
-
-
-
-## Rolling update??
+```bash
+sh canary-rollout.sh canary nginx-stable nginx nginx:1.11 3 nginx-canary
+```
+`canary` 네임스페이스에 있는 `nginx-stable` Deployment의 `nginx` 컨테이너 이미지를 `nginx:1.11`로 변경하고 replicas는 `3`개로 설정함. 그리고 실행중인 `nginx-canary` Deployment를 삭제함
 
 
 ## Reference 
