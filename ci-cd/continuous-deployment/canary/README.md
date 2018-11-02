@@ -1,7 +1,7 @@
 # Deployment Strategy - Canary Deployment
 
 Why Canary Deployment important?
-- fail-fast
+- fail-fast, early indicator
 - feature, performace, etc. verification
 - 빅이슈가 예상되는 경우, 새로운 피쳐를 일정 유저를 대상으로 테스트해보고 싶은 경우
 - 트래픽을 새로운 버전으로 점차 늘려가면서 배포하는 방법
