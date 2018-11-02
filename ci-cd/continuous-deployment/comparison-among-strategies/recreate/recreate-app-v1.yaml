@@ -1,0 +1,54 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  type: NodePort
+  selector:
+    app: my-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: my-app
+        version: "1.0"
+    spec:
+      containers:
+      - name: my-app
+        image: devchloe/my-app:1.0
+        ports:
+        - name: http
+          containerPort: 8080
+        - name: probe
+          containerPort: 8086
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          periodSeconds: 5
+
