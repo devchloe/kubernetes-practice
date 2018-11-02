@@ -1,0 +1,45 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kubeapp-canary
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: kubeapp
+      env: canary
+  template:
+    metadata:
+      labels:
+        app: kubeapp
+        env: canary
+    spec:
+      containers:
+      - name: kubeapp
+        image: devchloe/app:2.0
+        imagePullPolicy: Always
+        # readinessProbe:
+        #   httpGet:
+        #     path: /health
+        #     port: 8080
+        # command: ["/app"]
+        ports:
+        - name: kubeapp
+          containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kubeapp-canary-service
+  labels:
+    app: kubeapp
+    env: canary
+spec:
+  type: NodePort # 각 노드에 고정된 포트가 할당된다. nodeIP:nodePort로 들어온 요청은 pod 중 하나에 targetPort로 포워딩된다. (요청을 받은 노드와는 관계없이)
+  ports:
+  - name: kubeapp
+    port: 80 # 노드에 노출시키는 Service 포트
+    targetPort: 8080 # Deployment가 노출시키는 포트, Ingress는 항상 Service를 통해서만 Pod과 이야기할 수 있다.
+  selector:
+    app: kubeapp
+    env: canary

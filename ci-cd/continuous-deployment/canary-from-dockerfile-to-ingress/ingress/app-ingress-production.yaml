@@ -1,0 +1,17 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: app-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  backend:
+    serviceName: default-http-backend # host header가 설정되지 않은 request는 여기로 보낸다 
+    servicePort: 8080
+  rules: # name-based virtual hosting의 경우 Ingress가 host header를 확인하고 어떤 service로 트래픽을 전달해야 할지 판단한다 
+  - host: api.sample.com
+    http:
+      paths:
+      - backend:
+          serviceName: kubeapp-production-service
+          servicePort: 80

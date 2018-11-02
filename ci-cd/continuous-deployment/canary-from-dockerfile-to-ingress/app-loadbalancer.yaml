@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-lb
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80 # 외부에서 External IP:port로 들어온 요청은 노드 중 하나에 nodePort로 라우팅된다. 그 다음 pod 중 하나에 targetPort로 포워딩된다. 
+    targetPort: 8080
+    protocol: TCP
+  selector: # selector를 통해서 traffic을 포워딩할 pod을 auto-discover한다.
+    app: kubeapp
+  

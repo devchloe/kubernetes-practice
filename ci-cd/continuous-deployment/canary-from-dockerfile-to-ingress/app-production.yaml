@@ -1,0 +1,28 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: kubeapp-production
+spec:
+  replicas: 3 # how many cookies (pod replicas) you want
+  template: # cookie cutter for pod replicas
+    metadata:
+      labels:
+        app: kubeapp
+        env: production
+    spec:
+      containers:
+      - name: kubeapp
+        image: devchloe/app:1.0
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+        command: ["/app"]
+        ports:
+        - name: kubeapp
+          containerPort: 8080
+  selector:
+    matchLabels:
+      app: kubeapp # criteria for selecting pod replicas when load balancing
+      env: production
