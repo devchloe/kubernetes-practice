@@ -39,3 +39,5 @@ A/B Testing
 
 ## Reference
 - https://codefresh.io/kubernetes-tutorial/continuous-deployment-strategies-kubernetes-2/
+- Docker Container 오케스트레이션과 스케쥴링 워크플로우 https://blog.dockbit.com/kubernetes-canary-deployments-for-mere-mortals-6696910a52b2
+- https://container-solutions.com/kubernetes-deployment-strategies/
