@@ -167,3 +167,6 @@ Hello version 1.0
 Hello version 1.0
 Hello version 2.0
 Hello version 1.0
+
+reference:
+https://github.com/ContainerSolutions/k8s-deployment-strategies/tree/master/ramped
