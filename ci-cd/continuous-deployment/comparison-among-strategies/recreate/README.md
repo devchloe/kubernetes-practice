@@ -1,6 +1,7 @@
 ## 결과
 - 개발환경에서 사용하기에 적합, 어플리케이션 상태(state)가 완전히 새로 바뀌기 때문
 - 선 삭제 후 재배포, 컨테이너가 시작되기 까지 서비스하지 못함
+- Deployment strategy를 Recreate으로 하고 이미지만 변경해서 재배포함 
 
 ## 테스트 방법
 - Deployment strategy를 Recreate로 my-app:1.0 pod 생성
