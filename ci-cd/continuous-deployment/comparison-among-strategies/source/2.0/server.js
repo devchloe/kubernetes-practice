@@ -7,7 +7,7 @@ const PORT = 8080;
 const HOST = '0.0.0.0';
 
 app.get('/', (req, res, next) => {
-    res.send('Hello version 1.0\n');
+    res.send('Hello version 2.0\n');
 });
 
 app.get('/health', (req, res, next) => {
