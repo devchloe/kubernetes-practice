@@ -9,6 +9,8 @@
 - 재빨리 while sleep 0.1; do curl $(minikube service my-app --url); done (0.1초마다 요청 실행)
 - kubectl delete --all -l app=my-app으로 정리 (all = service, deployment, replicaset, pod)
 
+replicas 3
+pod 수 변경 과정: 3 -> 0 -> 3
 ## log
 ### kubectl get events -w 결과
 0s    Normal   ScalingReplicaSet   Deployment   Scaled down replica set my-app-66c8788c9 to 0
