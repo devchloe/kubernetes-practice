@@ -1,4 +1,5 @@
 ## 결과
+- 운영환경에서 트래픽을 한번에 A 버전에서 B 버전으로 넘기는 방법
 - 서로 다른 API 버전을 배포하기에 최적이다. (traffic을 한번에 전환시키기 때문에, 동시에 오래된 버전과 새로운 버전이 traffic을 받을 일이 없다)
 - 새로운 버전을 오래된 버전 수만큼 준비시켜 놓은 상태에서 Service의 selector를 변경시켜서 traffic이 한번에 넘어가도록 만든다 
 
@@ -21,6 +22,7 @@
 - curl $(minikube service my-app --url) 테스트
 - service=$(minikube service my-app --url), while sleep 0.1; do curl "$service"; done
 - patch service spec.selector.version 실행
+- 여러 서비스를 동시에 blue/green 배포하기 위해서는 ingress를 활용해서 serviceName을 green버전으로 모두 바꿔서 적용한다.
 
 ## logs
 
@@ -45,3 +47,4 @@ Hello version 2.0
 
 reference
 https://github.com/ContainerSolutions/k8s-deployment-strategies/tree/master/blue-green
+https://github.com/ContainerSolutions/k8s-deployment-strategies/tree/master/blue-green/multiple-services

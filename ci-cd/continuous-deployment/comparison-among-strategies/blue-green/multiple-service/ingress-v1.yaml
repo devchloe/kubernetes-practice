@@ -1,0 +1,14 @@
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  rules:
+  - host: my-app.com
+    http:
+      paths:
+      - backend:
+          serviceName: my-app-blue
+          servicePort: 80
