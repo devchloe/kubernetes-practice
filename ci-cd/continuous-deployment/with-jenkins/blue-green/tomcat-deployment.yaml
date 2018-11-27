@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat-deployment-${TARGET_ROLE}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tomcat
+      role: ${TARGET_ROLE}
+  template:
+    metadata:
+      labels:
+        app: tomcat
+        role: ${TARGET_ROLE}
+    spec:
+      containers:
+      - name: tomcat-container
+        image: tomcat:${TOMCAT_VERSION}
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+  minReadySeconds: 20
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25 # pod이 update 되는 동안 최소 몇퍼센트는 active로 유지해야 하는지
+      maxSurge: 50
+    
